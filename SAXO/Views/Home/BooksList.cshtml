@@ -1,0 +1,18 @@
+﻿@model IEnumerable<SAXO.Domain.Book>
+
+
+
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="@item.ImageUrl" alt="@item.Name" style="max-height: 150px;"/>
+                <div class="caption">
+                    <h3>@item.Name</h3>
+                    <p class="text-center"><a href="@item.Url" class="btn btn-primary" role="button" target="_blank">Get more info</a></p>
+                </div>
+            </div>
+        </div>
+    }
+
+
