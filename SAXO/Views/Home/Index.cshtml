@@ -1,15 +1,19 @@
-﻿@{
+﻿@model SAXO.Models.ISBNViewModel
+@{
     ViewBag.Title = "Home Page";
 }
 <br/>
-    <div class="row"><div class="col-md-4">
-    @using (Ajax.BeginForm("GetBooks", "Home", new AjaxOptions { HttpMethod = "POST" }))
+    <div class="row"><div class="col-md-2">
+    @using (Ajax.BeginForm("GetBooks", "Home", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.InsertAfter, UpdateTargetId = "books" }, new { @class = "isbn" }))
     {
-        <textarea id="isbn" name="isbns" role="textbox"></textarea>
+        <div class="form-group">
+                @Html.ValidationMessageFor(model => model.ISBN)
+                @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @placeholder = "Enter ISBN" } })
+            </div>
         <button type="submit" class="btn btn-lg btn-primary btn-block" >Submit</button>
 }
 </div> 
-    <div class="col-md-8">
+    <div id="books" class="col-md-10 books-list">
         @Html.Action("ShowBooks","Home")
     </div>
 </div>

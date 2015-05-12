@@ -1,5 +1,6 @@
 ﻿using SAXO.Abstractions;
 using SAXO.Domain;
+using SAXO.Models;
 using SAXO.Services;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,16 @@ namespace SAXO.Controllers
 {
     public class HomeController : Controller
     {
-        private IRepository<Book> booksRepo;
-        private BookService booksService;
-        public HomeController(IRepository<Book> booksRepo, BookService booksService)
+        private IBookSyncedRepository booksRepo;
+
+        public HomeController(IBookSyncedRepository booksRepo)
         {
+
             this.booksRepo = booksRepo;
-            this.booksService = booksService;
         }
+
         public ActionResult Index()
-        {
-            
+        {            
             return View();
         }
 
@@ -28,46 +29,15 @@ namespace SAXO.Controllers
         public ActionResult ShowBooks()
         {
             var books = booksRepo.GetAll();
-            return PartialView("BooksList",books);
+            return PartialView("BooksList", books);
         }
 
         [HttpPost]
-        public ActionResult GetBooks(String isbns)
+        public ActionResult GetBooks(ISBNViewModel model)
         {
-            var isbnsList = isbns.Trim().Split('\n');
-            var notInDb = new List<String>();
-            foreach(var id in isbnsList)
-            {
-                if (id.Length == 10 && !booksRepo.FindBy(b => b.ISBN10.Equals(id)).Any())
-                {
-                    notInDb.Add(id);
-                }
-                else if (id.Length == 13 && !booksRepo.FindBy(b => b.ISBN13.Equals(id)).Any())
-                {
-                    notInDb.Add(id);
-                }
-            }
-            if (notInDb.Count > 0)
-            {
-                var newBooks = booksService.GetBooks(notInDb);
-                return Content(newBooks.Count().ToString());
-            }
-            return Content("No new books");
-            
-        }
-            
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            var isbnsList = model.ISBN.Replace("\r", "").Split('\n');
+            var newBooks = booksRepo.GetNotSynced(isbnsList);
+            return PartialView("BooksList", newBooks);
         }
     }
 }
