@@ -10,6 +10,11 @@ namespace SAXO.Repositories
 {
     public class BookContext : DbContext
     {
+        public BookContext()
+        {
+            Database.SetInitializer<BookContext>(new DropCreateDatabaseAlways<BookContext>());
+        }
         public DbSet<Book> Books { get; set; }
+
     }
 }
