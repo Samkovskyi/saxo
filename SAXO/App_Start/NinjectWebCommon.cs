@@ -52,6 +52,7 @@ namespace SAXO.App_Start
                 //Injections
                 kernel.Bind<IRepository<Book>>().To<BookRepository>();
                 kernel.Bind<IBookService>().To<BookService>();
+                kernel.Bind<IBookSyncedRepository>().To<BookSyncedRepository>();
 
                 RegisterServices(kernel);
                 return kernel;
