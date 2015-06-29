@@ -1,23 +1,17 @@
-﻿using SAXO.Abstractions;
-using SAXO.Domain;
+﻿using SAXO.Domain.Abstractions;
 using SAXO.Models;
-using SAXO.Services;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SAXO.Controllers
 {
     public class HomeController : Controller
     {
-        private IBookSyncedRepository booksRepo;
+        private readonly IBookSynchronizer bookSynchronizer;
 
-        public HomeController(IBookSyncedRepository booksRepo)
+        public HomeController(IBookSynchronizer bookSynchronizer)
         {
-
-            this.booksRepo = booksRepo;
+            this.bookSynchronizer = bookSynchronizer;
         }
 
         public ActionResult Index()
@@ -25,19 +19,27 @@ namespace SAXO.Controllers
             return View();
         }
 
-
         public ActionResult ShowBooks()
         {
-            var books = booksRepo.GetAll();
+            var books = bookSynchronizer
+                            .GetAll()
+                            .Select(b => new BookViewModel(b));
+
             return PartialView("BooksList", books);
         }
 
         [HttpPost]
-        public ActionResult GetBooks(ISBNViewModel model)
+        public ActionResult RetrieveBooks(ISBNViewModel model)
         {
-            var isbnsList = model.ISBN.Replace("\r", "").Split('\n');
-            var newBooks = booksRepo.GetNotSynced(isbnsList);
-            return PartialView("BooksList", newBooks);
+            if (ModelState.IsValid)
+            {
+                var isbnsList = model.ISBN.Replace("\r", "").Split('\n');
+                var newBooks = bookSynchronizer
+                                    .RetrieveNewBooks(isbnsList)
+                                    .Select(b => new BookViewModel(b));
+                return PartialView("BooksList", newBooks);
+            }
+            return new EmptyResult();
         }
     }
 }

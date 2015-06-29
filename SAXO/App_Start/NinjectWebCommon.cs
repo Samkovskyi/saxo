@@ -1,20 +1,19 @@
+using System;
+using System.Web;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+using Ninject;
+using Ninject.Web.Common;
+using SAXO.Domain.Abstractions;
+using SAXO.Domain.Business;
+using SAXO.Domain.Model;
+using SAXO.Domain.Repositories;
+using SAXO.Domain.Services;
+
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SAXO.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(SAXO.App_Start.NinjectWebCommon), "Stop")]
 
 namespace SAXO.App_Start
 {
-    using System;
-    using System.Web;
-
-    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
-    using Ninject;
-    using Ninject.Web.Common;
-    using SAXO.Abstractions;
-    using SAXO.Domain;
-    using SAXO.Repositories;
-    using SAXO.Services;
-
     public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -52,7 +51,7 @@ namespace SAXO.App_Start
                 //Injections
                 kernel.Bind<IRepository<Book>>().To<BookRepository>();
                 kernel.Bind<IBookService>().To<BookService>();
-                kernel.Bind<IBookSyncedRepository>().To<BookSyncedRepository>();
+                kernel.Bind<IBookSynchronizer>().To<BookSynchronizer>();
 
                 RegisterServices(kernel);
                 return kernel;
@@ -70,6 +69,6 @@ namespace SAXO.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-        }        
+        }
     }
 }

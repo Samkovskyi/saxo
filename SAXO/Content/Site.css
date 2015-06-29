@@ -30,8 +30,17 @@ select{
     resize: none;
 }
 
+.isbn .preloader {
+  display: none;
+  background-image: url(Images/preloader.GIF);
+  height: 40px;
+  width: 100%;
+
+}
 
 .books-list .thumbnail {
     height: 290px;
     margin: 10px 0;
 }
+
+.field-validation-error{ color: red; font-weight: bold; }

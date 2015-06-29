@@ -2,18 +2,21 @@
 @{
     ViewBag.Title = "Home Page";
 }
+
 <br/>
-    <div class="row"><div class="col-md-2">
-    @using (Ajax.BeginForm("GetBooks", "Home", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.InsertAfter, UpdateTargetId = "books" }, new { @class = "isbn" }))
-    {
-        <div class="form-group">
-                @Html.ValidationMessageFor(model => model.ISBN)
-                @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @placeholder = "Enter ISBN" } })
-            </div>
-        <button type="submit" class="btn btn-lg btn-primary btn-block" >Submit</button>
-}
-</div> 
+<div class="row"><div class="col-md-2">
+                     @using (Ajax.BeginForm("RetrieveBooks", "Home", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.InsertAfter, UpdateTargetId = "books", OnBegin = "SAXO.OnBegin", OnComplete = "SAXO.OnCmplete", OnSuccess = "SAXO.ClearInput" }, new { @class = "isbn", id = "isbnForm" }))
+                     {
+                         <div class="form-group">
+                             @Html.ValidationMessageFor(model => model.ISBN)
+                             @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter ISBN" } })
+                         </div>
+                         <div id="prealoader" class="preloader"></div>
+                         <button id="submitBtn" type="submit" class="btn btn-lg btn-primary btn-block" >Retrieve Books</button>
+                     }
+                 </div> 
     <div id="books" class="col-md-10 books-list">
-        @Html.Action("ShowBooks","Home")
+        @Html.Action("ShowBooks", "Home")
     </div>
 </div>
+@Html.Partial("ModalPopup")
